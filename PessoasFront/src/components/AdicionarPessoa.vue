@@ -1,10 +1,10 @@
 <template>
   <div id="body">
     <section class="container p-4">
-        <div class="text-center">
+        <div class="text-center" v-if="!editMode">
           <h1>Cadastro de Pessoas</h1>
         </div>
-        <b-card :header="(editMode ? 'Editar Pessoa - ' + pessoa.name : 'Adicionar nova Pessoa')"
+        <b-card :header="(editMode ? 'Editar Pessoa - ' + $store.getters.pessoa.name : 'Adicionar nova Pessoa')"
           class="border-secondary text-primary">
           <div class="alert alert-success" role="alert" v-if="adicionado">
             <strong>Well done!</strong> Pessoa Adicionada.
@@ -15,14 +15,14 @@
                 <b-col>
                   <b-form-group class="mr-3">
                     <b-input-group prepend="Nome" class="mt-3">
-                      <b-form-input v-on:focus="disableAlert" required v-model="pessoa.name"></b-form-input>
+                      <b-form-input v-on:focus="disableAlert" required v-model="$store.getters.pessoa.name"></b-form-input>
                     </b-input-group>
                   </b-form-group>
                 </b-col>
                 <b-col>
                   <b-form-group class="mr-1">
                     <b-input-group prepend="Email" class="mt-3">
-                      <b-form-input v-on:focus="disableAlert" required v-model="pessoa.email" type="email"></b-form-input>
+                      <b-form-input v-on:focus="disableAlert" required v-model="$store.getters.pessoa.email" type="email"></b-form-input>
                     </b-input-group>
                   </b-form-group>
                 </b-col>
@@ -30,7 +30,7 @@
                 <b-col>
                   <b-form-group class="mr-3">
                     <b-input-group prepend="Endereço" class="mt-3">
-                      <b-form-input v-on:focus="disableAlert" required v-model="pessoa.adress"></b-form-input>
+                      <b-form-input v-on:focus="disableAlert" required v-model="$store.getters.pessoa.adress"></b-form-input>
                     </b-input-group>
                   </b-form-group>
                 </b-col>
@@ -38,7 +38,7 @@
                   <b-form-group class="mr-1">
                     <b-input-group prepend="Sexo" class="mt-3" for="inputGroupSelectSexo">
                         <b-form-select
-                          required v-model="pessoa.sex" id="inputGroupSelectSexo" :options="optionsSex">
+                          required v-model="$store.getters.pessoa.sex" id="inputGroupSelectSexo" :options="optionsSex">
                         </b-form-select>
                     </b-input-group>
                   </b-form-group>
@@ -47,6 +47,7 @@
               <div class="mt-3 mr-1">
                 <div class="w-100">
                   <button v-if="!editMode" type="submit" class="btn btn-primary btn-block mr-3">Adicionar</button>
+                  <button v-if="editMode" type="submit" class="btn btn-primary btn-block mr-3">Atualizar</button>
                 </div>
               </div>
             </b-container>
@@ -73,40 +74,48 @@ export default {
         adress: '',
         sex: ''
       },
-      Props: this.pessoaProps,
       optionsSex: ['M', 'F'],
       listaPessoas: [],
       editMode: false,
       adicionado: false
     }
   },
-  props: ['pessoaProps'],
   async created () {
+    this.pessoa = Object.assign({}, this.$store.getters.pessoa)
     this.refreshListaPessoas()
+    this.editMode = this.$store.getters.editMode
   },
   methods: {
     async refreshListaPessoas () {
       this.listaPessoas = (await request.getPessoas()).pessoas
+      this.$store.commit('changeListaPessoa', this.listaPessoas)
     },
     async savePessoa () {
       if (this.editMode) {
         await request.updatePessoa(this.pessoa.id, this.pessoa)
-        this.atualizado = true
+        this.$store.commit('changePessoaAtualizada', true)
+        this.$store.commit('changeEditMode', false)
+        this.listaPessoas = (await request.getPessoas()).pessoas
+        this.$store.commit('changeListaPessoa', this.listaPessoas)
       } else {
         await request.addPessoa(this.pessoa)
         this.adicionado = true
       }
       await this.refreshListaPessoas()
+      this.clearFields()
+    },
+    disableAlert () {
+      this.adicionado = false
+      this.deletado = false
+      this.$store.commit('changePessoaAtualizada', false)
+    },
+    clearFields () {
       this.editMode = false
       this.pessoa.name = ''
       this.pessoa.email = ''
       this.pessoa.adress = ''
       this.pessoa.sex = ''
-    },
-    disableAlert () {
-      this.adicionado = false
-      this.deletado = false
-      this.atualizado = false
+      this.$store.commit('changePessoa', this.pessoa)
     }
   }
 }

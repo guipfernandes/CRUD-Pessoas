@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var model = require('../models/index');
+var model = require('../models').Pessoa;
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  model.Pessoa.findAll({})
+  model.findAll({})
     .then(pessoas => res.json({
       pessoas
   }))
@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/:id', (req, res, next) => {
   const pessoa_id = req.params.id;
-  model.Pessoa.findAll({
+  model.findOne({
     where: { id: pessoa_id }
   })
   .then(pessoa => res.json({
@@ -33,7 +33,7 @@ router.get('/:id', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
   const {name, email, adress, sex, active} = req.body;
-  model.Pessoa.create({
+  model.create({
       name: name,
       email: email,
       adress: adress, 
@@ -55,7 +55,7 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const pessoa_id = req.params.id;
   const {name, email, adress, sex, active} = req.body;
-  model.Pessoa.update({
+  model.update({
       name: name,
       email: email,
       adress: adress, 
@@ -78,7 +78,7 @@ router.put('/:id', (req, res, next) => {
 
 router.delete('/:id', (req, res, next) => {
   const pessoa_id = req.params.id;
-  model.Pessoa.destroy({
+  model.destroy({
     where: {
       id: pessoa_id
     }

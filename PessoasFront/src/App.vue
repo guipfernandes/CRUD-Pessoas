@@ -33,7 +33,7 @@ export default {
   }
   .moveInUp-enter-active{
   opacity: 1;
-  animation: fadeIn 1.5s ease-in;
+  animation: fadeIn 1s ease-in;
   }
   @keyframes fadeIn{
     0%{

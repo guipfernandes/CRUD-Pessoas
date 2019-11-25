@@ -14,7 +14,6 @@ Vue.use(VueRouter)
 Vue.config.productionTip = false
 
 Vue.component('Home', require('./components/Home.vue').default)
-Vue.component('PessoasManager', require('./components/PessoasManager.vue').default)
 Vue.component('NavBar', require('./components/NavBar.vue').default)
 Vue.component('AdicionarPessoa', require('./components/AdicionarPessoa.vue').default)
 

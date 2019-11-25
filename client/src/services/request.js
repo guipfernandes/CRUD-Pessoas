@@ -9,7 +9,7 @@ export default {
   async execute (method, url, data) {
     return client({
       method,
-      url: url,
+      url,
       data
     }).then(req => {
       return req.data

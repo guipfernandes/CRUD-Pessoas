@@ -19,7 +19,7 @@ npm run dev
 ```
 If you are new to MySQL, you may need to run:
 ```bash
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'YOURPASSWORD';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'YOURPASSWORD';
 ```
 
 ## Home
